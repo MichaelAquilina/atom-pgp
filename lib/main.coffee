@@ -20,16 +20,18 @@ AtomPGP =
     atom.workspace.addOpener (uri) ->
       if /^.*gpg$/.test(uri)
         editor = atom.workspace.buildTextEditor()
+        pgp_buffer = editor.getBuffer()
+
         child = child_process.exec("gpg -d #{uri}", (error, stdout, stderr) =>
           start = stderr.indexOf("ID") + 3
           pgp_id = stderr.substring(start, start+8)
           editor.setText(stdout)
-          editor.getBuffer().setPath(uri)
-          editor.getBuffer().fileSubscriptions?.dispose()
-          editor.getBuffer().fileSubscriptions = new CompositeDisposable()
-          editor.getBuffer().save () =>
+          pgp_buffer.setPath(uri)
+          pgp_buffer.fileSubscriptions?.dispose()
+          pgp_buffer.fileSubscriptions = new CompositeDisposable()
+          pgp_buffer.save () =>
             save_encrypted_contents(editor.getText(), uri, pgp_id)
-          editor.getBuffer().saveAs = (uri) =>
+          pgp_buffer.saveAs = (uri) =>
             save_encrypted_contents(editor.getText(), uri, pgp_id)
         )
         return editor
