@@ -45,6 +45,8 @@ AtomPGP =
       if /^.*gpg$/.test(uri)
         editor = atom.workspace.buildTextEditor()
         pgp_buffer = editor.getBuffer()
+        pgp_buffer.isModified ->
+          return true
 
         pgp_buffer.updateCachedDiskContents = (flushCache=false, callback) ->
           load_encrypted_contents(@getPath()).then (result) =>
@@ -56,8 +58,8 @@ AtomPGP =
           @cachedDiskContents = result['data']
           @pgp_id = result['pgp_id']
 
-        pgp_buffer.saveAs = (uri) ->
-          save_encrypted_contents(@getText(), uri, @pgp_id)
+        pgp_buffer.saveAs = (filePath) ->
+          save_encrypted_contents(@getText(), filePath, @pgp_id)
         pgp_buffer.setPath(uri)
         pgp_buffer.load()
 
