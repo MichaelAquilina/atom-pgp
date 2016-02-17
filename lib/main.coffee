@@ -62,7 +62,6 @@ AtomPGP =
           save_encrypted_contents(@getText(), uri, @pgp_id)
         pgp_buffer.setPath(uri)
         pgp_buffer.load()
-        console.log("#{pgp_buffer.file}")
 
         return editor
 
