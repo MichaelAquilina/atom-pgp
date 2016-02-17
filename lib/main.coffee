@@ -2,6 +2,7 @@ path = require('path')
 child_process = require('child_process')
 readline = require('readline')
 
+
 save_encrypted_contents = (content, uri, pgp_id) ->
   console.log("Saving encrypted contents with pgp_id #{pgp_id} to #{uri}")
   command = "echo '#{content}' | gpg --encrypt --recipient #{pgp_id} > #{uri}"
@@ -10,6 +11,7 @@ save_encrypted_contents = (content, uri, pgp_id) ->
       console.log(stdout)
       console.log(stderr)
   )
+
 
 handle_gpg_output = (stdout, stderr)  ->
     start = stderr.indexOf("ID") + 3
@@ -65,8 +67,8 @@ AtomPGP =
 
         return editor
 
-
   deactivate: ->
     # remove opener?
+
 
 module.exports = AtomPGP
