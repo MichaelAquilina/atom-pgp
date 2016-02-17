@@ -12,6 +12,14 @@ save_encrypted_contents = (content, uri, pgp_id) ->
       console.log(stderr)
   )
 
+handle_gpg_output = (stdout, stderr)  ->
+    start = stderr.indexOf("ID") + 3
+    pgp_id = stderr.substring(start, start+8)
+    return {
+      data: stdout
+      pgp_id: pgp_id
+    }
+
 
 load_encrypted_contents = (uri) ->
   console.log("Loading encrypted contents from #{uri}")
@@ -22,16 +30,14 @@ load_encrypted_contents = (uri) ->
         if error is not null
           reject()
         else
-          start = stderr.indexOf("ID") + 3
-          pgp_id = stderr.substring(start, start+8)
-          console.log("Found PGP id #{pgp_id}")
-          resolve(stdout)
+          resolve(handle_gpg_output(stdout, stderr))
     )
   )
 
+
 load_encrypted_contents_sync = (uri) ->
-  contents = child_process.execSync("gpg --batch -d #{uri}")
-  return contents
+  process = child_process.spawnSync("gpg --batch -d #{uri}")
+  return handle_gpg_output(process.stdout.toString(), process.stderr.toString())
 
 
 AtomPGP =
@@ -42,11 +48,12 @@ AtomPGP =
         pgp_buffer = editor.getBuffer()
 
         pgp_buffer.updateCachedDiskContents = (flushCache=false, callback) ->
-          load_encrypted_contents(@getPath()).then (contents) =>
-            @cachedDiskContents = contents
+          load_encrypted_contents(@getPath()).then (result) =>
+            @cachedDiskContents = result['data']
             callback?()
         pgp_buffer.updateCachedDiskContentsSync = () ->
-          @cachedDiskContents = load_encrypted_contents_sync(@getPath())
+          result = load_encrypted_contents_sync(@getPath())
+          @cachedDiskContents = result['data']
 
         pgp_buffer.save = () ->
           save_encrypted_contents(@getText(), @getPath(), "michaelaquilina@gmail.com")
