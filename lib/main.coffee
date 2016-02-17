@@ -50,15 +50,17 @@ AtomPGP =
         pgp_buffer.updateCachedDiskContents = (flushCache=false, callback) ->
           load_encrypted_contents(@getPath()).then (result) =>
             @cachedDiskContents = result['data']
+            @pgp_id = result['pgp_id']
             callback?()
         pgp_buffer.updateCachedDiskContentsSync = () ->
           result = load_encrypted_contents_sync(@getPath())
           @cachedDiskContents = result['data']
+          @pgp_id = result['pgp_id']
 
         pgp_buffer.save = () ->
-          save_encrypted_contents(@getText(), @getPath(), "michaelaquilina@gmail.com")
+          save_encrypted_contents(@getText(), @getPath(), @pgp_id)
         pgp_buffer.saveAs = (uri) ->
-          save_encrypted_contents(@getText(), uri, "michaelaquilina@gmail.com")
+          save_encrypted_contents(@getText(), uri, @pgp_id)
         pgp_buffer.setPath(uri)
         pgp_buffer.load()
         console.log("#{pgp_buffer.file}")
