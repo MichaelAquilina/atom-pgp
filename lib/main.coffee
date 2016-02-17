@@ -56,8 +56,6 @@ AtomPGP =
           @cachedDiskContents = result['data']
           @pgp_id = result['pgp_id']
 
-        pgp_buffer.save = () ->
-          save_encrypted_contents(@getText(), @getPath(), @pgp_id)
         pgp_buffer.saveAs = (uri) ->
           save_encrypted_contents(@getText(), uri, @pgp_id)
         pgp_buffer.setPath(uri)
