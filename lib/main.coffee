@@ -1,6 +1,4 @@
-path = require('path')
 child_process = require('child_process')
-readline = require('readline')
 
 
 save_encrypted_contents = (content, uri, pgp_id) ->
