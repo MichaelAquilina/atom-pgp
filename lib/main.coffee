@@ -17,7 +17,7 @@ load_encrypted_contents = (uri) ->
   console.log("Loading encrypted contents from #{uri}")
   return new Promise( (resolve, reject) ->
     child_process.exec(
-      "gpg -d #{uri}",
+      "gpg --batch -d #{uri}",
       (error, stdout, stderr) ->
         if error is not null
           reject()
@@ -30,7 +30,7 @@ load_encrypted_contents = (uri) ->
   )
 
 load_encrypted_contents_sync = (uri) ->
-  contents = child_process.execSync("gpg -d #{uri}")
+  contents = child_process.execSync("gpg --batch -d #{uri}")
   return contents
 
 
