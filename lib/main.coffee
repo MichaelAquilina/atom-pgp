@@ -3,7 +3,7 @@ child_process = require('child_process')
 
 save_encrypted_contents = (content, uri, pgp_id) ->
   console.log("Saving encrypted contents with pgp_id #{pgp_id} to #{uri}")
-  command = "echo '#{content}' | gpg --encrypt --recipient #{pgp_id} > #{uri}"
+  command = "echo '#{content}' | gpg --no-tty --encrypt --recipient #{pgp_id} > #{uri}"
   child_process.exec(
     command, (error, stdout, stderr) ->
       console.log(stdout)
@@ -24,7 +24,7 @@ load_encrypted_contents = (uri) ->
   console.log("Loading encrypted contents from #{uri}")
   return new Promise( (resolve, reject) ->
     child_process.exec(
-      "gpg --batch -d #{uri}",
+      "gpg --no-tty -d #{uri}",
       (error, stdout, stderr) ->
         if error is not null
           reject()
